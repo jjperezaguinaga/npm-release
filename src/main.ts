@@ -83,6 +83,7 @@ async function run() {
     );
 
     await exec("npm whoami");
+    await exec(`Building with flags: ${publicFlags}`);
 
     /* check if the deps where installed in a previous step */
     const isInstalled = await isDir("node_modules");
