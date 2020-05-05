@@ -60,6 +60,8 @@ async function run() {
     }
 
     const type: "stable" | "prerelease" = core.getInput("type") as any;
+    const isPublic = core.getInput("public") as boolean;
+    const publicFlags = isPublic && '--access public';
 
     if (!["stable", "prerelease"].includes(type)) {
         core.setFailed(
@@ -95,9 +97,9 @@ async function run() {
 
     if (type === "prerelease") {
         await setPrereleaseVersion();
-        await exec(`npm publish --tag ${tag}`);
+        await exec(`npm publish --tag ${tag} ${publicFlags}`);
     } else {
-        await exec("npm publish");
+        await exec(`npm publish ${publicFlags}`);
     }
 
     core.exportVariable("NPM_RELEASE_TAG", tag);
