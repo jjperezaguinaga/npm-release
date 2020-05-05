@@ -60,8 +60,8 @@ async function run() {
     }
 
     const type: "stable" | "prerelease" = core.getInput("type") as any;
-    const isPublic = core.getInput("public") as boolean;
-    const publicFlags = isPublic && '--access public';
+    const isPublic = core.getInput("public") as any;
+    const publicFlags = isPublic === "true" && '--access public';
 
     if (!["stable", "prerelease"].includes(type)) {
         core.setFailed(
@@ -83,7 +83,7 @@ async function run() {
     );
 
     await exec("npm whoami");
-    await exec(`Building with flags: ${publicFlags}`);
+    await exec(`echo "Building with flags: ${publicFlags}"`);
 
     /* check if the deps where installed in a previous step */
     const isInstalled = await isDir("node_modules");

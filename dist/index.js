@@ -695,6 +695,8 @@ async function run() {
         return;
     }
     const type = core.getInput("type");
+    const isPublic = core.getInput("public");
+    const publicFlags = isPublic === "true" && '--access public';
     if (!["stable", "prerelease"].includes(type)) {
         core.setFailed("You must set the 'type' input to 'stable' or 'prerelease'");
         return;
@@ -706,6 +708,7 @@ async function run() {
     }
     await fs_1.promises.writeFile(path_1.default.join(process.env.HOME || "~", ".npmrc"), `//registry.npmjs.org/:_authToken=${npmToken}`);
     await exec_1.exec("npm whoami");
+    await exec_1.exec(`echo "Building with flags: ${publicFlags}"`);
     /* check if the deps where installed in a previous step */
     const isInstalled = await isDir("node_modules");
     if (!isInstalled) {
@@ -718,10 +721,10 @@ async function run() {
     }
     if (type === "prerelease") {
         await setPrereleaseVersion();
-        await exec_1.exec(`npm publish --tag ${tag}`);
+        await exec_1.exec(`npm publish --tag ${tag} ${publicFlags}`);
     }
     else {
-        await exec_1.exec("npm publish");
+        await exec_1.exec(`npm publish ${publicFlags}`);
     }
     core.exportVariable("NPM_RELEASE_TAG", tag);
     await exportReleaseVersion();
